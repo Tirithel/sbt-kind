@@ -1,7 +1,5 @@
 package sbtkind
 
-import java.util.UUID
-
 import sbt.*
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -31,7 +29,7 @@ object LoadImages {
           },
           onException = e => log.error(e.getMessage),
           onSuccess = (load: KindLoad) => {
-            log.success(s"Successfully loaded ${load.id}")
+            log.success(s"Successfully loaded ${load.image} to $clusterName.")
           },
         )
 
@@ -50,15 +48,15 @@ object LoadImages {
     */
   private[this] def load(clusterName: String, image: String)(
     implicit log: Logger): EitherT[Future, Error, KindLoad] = {
-    val kindLoad = KindLoad(UUID.randomUUID)
+    val kindLoad = KindLoad(image)
 
     log.debug(s"kind load docker-image $image --name $clusterName")
-    log.info(s"Loading $image with id ${kindLoad.id}")
+    log.info(s"Loading $image with id ${kindLoad.image}")
     val result = s"kind load docker-image $image --name $clusterName" ! lineInfoProcessLogger
 
     result match {
-      case 0 => EitherT.rightT(KindLoad(UUID.randomUUID()))
-      case _ => EitherT.leftT(KindLoadError(s"Error loading image $image with id ${kindLoad.id}"))
+      case 0 => EitherT.rightT(kindLoad)
+      case _ => EitherT.leftT(KindLoadError(s"Error loading image $image with id ${kindLoad.image}"))
     }
   }
 
