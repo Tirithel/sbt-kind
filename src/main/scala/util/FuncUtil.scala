@@ -1,7 +1,6 @@
 package sbtkind.util
 
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Failure, Success }
 
 import sbtkind.KindLoadError
 
