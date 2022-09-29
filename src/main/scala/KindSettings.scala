@@ -2,19 +2,20 @@ package sbtkind
 
 import sbt._
 
-import sbtkind.util.implicits.log
 import sbtkind.KindKeys._
 
 object KindSettings {
 
   lazy val baseKindSettings = Seq(
     kind := {
+      implicit val log = Keys.streams.value.log
+
       val clusterName = (kind / KindKeys.clusterName).value
       val imageNames  = (kind / KindKeys.dockerImageNames).value
 
       LoadImages(clusterName, imageNames) match {
         case Left(e)  => log.error(e.getMessage)
-        case Right(_) => _
+        case Right(_) => ()
       }
     },
     kind / clusterName := {
