@@ -37,12 +37,12 @@ object LoadImages {
     val kindLoad = KindLoad(image)
 
     log.debug(s"kind load docker-image $image --name $clusterName")
-    log.info(s"Loading $image with id ${kindLoad.image}")
+    log.info(s"Loading ${kindLoad.image}...")
     val result = s"kind load docker-image $image --name $clusterName" ! lineInfoProcessLogger
 
     result match {
       case 0 => Right(kindLoad)
-      case _ => Left(KindLoadError(s"Error loading image $image with id ${kindLoad.image}"))
+      case _ => Left(KindLoadError(s"Error loading image ${kindLoad.image}"))
     }
   }
 
