@@ -2,9 +2,6 @@ package sbtkind
 
 import sbt.*
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.util.{ Failure, Success }
-
 import sbtkind.KindKeys.*
 
 object KindSettings {
