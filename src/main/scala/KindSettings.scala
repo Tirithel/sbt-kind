@@ -1,8 +1,11 @@
 package sbtkind
 
-import sbt._
+import sbt.*
 
-import sbtkind.KindKeys._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{ Failure, Success }
+
+import sbtkind.KindKeys.*
 
 object KindSettings {
 
@@ -15,7 +18,7 @@ object KindSettings {
 
       LoadImages(clusterName, imageNames) match {
         case Left(e)  => log.error(e.getMessage)
-        case Right(_) => ()
+        case Right(r) => r.foreach(load => log.success(s"Successfully loaded ${load.image} to $clusterName."))
       }
     },
     kind / clusterName := {

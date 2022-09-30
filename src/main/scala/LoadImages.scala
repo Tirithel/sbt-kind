@@ -2,38 +2,24 @@ package sbtkind
 
 import sbt.*
 
-import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.*
-
-import cats.data.EitherT
-import cats.implicits.*
-import sbtkind.util.FuncUtil.handleResponse
-import ExecutionContext.Implicits.global
 
 object LoadImages {
   var lines = Seq.empty[String]
 
   def apply(clusterName: String, images: Seq[String])(
-    implicit log: Logger): Either[Error, Seq[Future[Unit]]] = {
+    implicit log: Logger): Either[Error, Seq[KindLoad]] = {
     val v = "kind get clusters" !! throwAwayProcessLogger
 
     if (v.contains(clusterName)) {
-      val f =
-        for {
-          result <- images.map(img => load(clusterName, img))
-        } yield handleResponse(
-          "LoadImages",
-          result.value,
-          onError = (error: Error) => {
-            log.error(error.getMessage)
-          },
-          onException = e => log.error(e.getMessage),
-          onSuccess = (load: KindLoad) => {
-            log.success(s"Successfully loaded ${load.image} to $clusterName.")
-          },
-        )
-
-      Right(f)
+      images.map(image => load(clusterName, image)).foldRight(Right(Nil): Either[Error, List[KindLoad]]) {
+        (e, acc) =>
+          if (e.isLeft) log.error(e.left.get.getMessage)
+          for {
+            xs <- acc.right
+            x  <- e.right
+          } yield x :: xs
+      }
     } else {
       Left(KindClusterDoesNotExistError(s"Cluster $clusterName does not exist."))
     }
@@ -47,7 +33,7 @@ object LoadImages {
     * @return
     */
   private[this] def load(clusterName: String, image: String)(
-    implicit log: Logger): EitherT[Future, Error, KindLoad] = {
+    implicit log: Logger): Either[Error, KindLoad] = {
     val kindLoad = KindLoad(image)
 
     log.debug(s"kind load docker-image $image --name $clusterName")
@@ -55,8 +41,8 @@ object LoadImages {
     val result = s"kind load docker-image $image --name $clusterName" ! lineInfoProcessLogger
 
     result match {
-      case 0 => EitherT.rightT(kindLoad)
-      case _ => EitherT.leftT(KindLoadError(s"Error loading image $image with id ${kindLoad.image}"))
+      case 0 => Right(kindLoad)
+      case _ => Left(KindLoadError(s"Error loading image $image with id ${kindLoad.image}"))
     }
   }
 
