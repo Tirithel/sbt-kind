@@ -4,34 +4,34 @@ import sbtrelease._
 import xerial.sbt.Sonatype._
 import ReleaseStateTransformations._
 
-ThisBuild / organization := "org.cmoran"
+organization := "org.cmoran"
 
 sonatypeProjectHosting := Some(GitHubHosting("tirithel", "sbt-kind", "colin.mtech@gmail.com"))
 
-ThisBuild / scmInfo := Some(
+scmInfo := Some(
   ScmInfo(
     url("https://github.com/Tirithel/sbt-kind"),
     "scm:git@github.com:Tirithel/sbt-kind.git",
   )
 )
 
-ThisBuild / description := "sbt plugin that loads built Docker images for your project into a kind cluster."
-ThisBuild / licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
-ThisBuild / homepage := Some(url("https://github.com/Tirithel/sbt-kind"))
+description := "sbt plugin that loads built Docker images for your project into a kind cluster."
+licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+homepage := Some(url("https://github.com/Tirithel/sbt-kind"))
 
 // Remove all additional repository other than Maven Central from POM
-ThisBuild / pomIncludeRepository := { _ => false }
+pomIncludeRepository := { _ => false }
 
-ThisBuild / publishTo := {
+publishTo := {
   val nexus = "https://s01.oss.sonatype.org/"
   if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
   else Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
-ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
-ThisBuild / publishMavenStyle      := true
+sonatypeCredentialHost := "s01.oss.sonatype.org"
+publishMavenStyle      := true
 
-ThisBuild / credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
+credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
