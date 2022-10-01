@@ -18,6 +18,13 @@ object KindSettings {
         case Right(r) => r.foreach(load => log.success(s"Successfully loaded ${load.image} to $clusterName."))
       }
     },
+
+    /**
+      * The `clusterName` will default to an error since we cannot assume which
+      * if any cluster the user wants to load images to.
+      *
+      * Defaults to: None, will exit with an error.
+      */
     kind / clusterName := {
       sys.error(
         """A cluster name is not defined. Please define one with `kind / clusterName
@@ -29,6 +36,13 @@ object KindSettings {
           |}
           |""".stripMargin)
     },
+
+    /**
+      * The key `dockerImageNames` will default the same way the sbt-docker
+      * plugin works. This is to try to achieve out of the box compatibility.
+      *
+      * Defaults to: `project-organization`/`project-name`
+      */
     kind / dockerImageNames := {
       val log = Keys.streams.value.log
 
