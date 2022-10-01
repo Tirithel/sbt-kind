@@ -22,15 +22,16 @@ homepage := Some(url("https://github.com/Tirithel/sbt-kind"))
 // Remove all additional repository other than Maven Central from POM
 pomIncludeRepository := { _ => false }
 
-publishTo := {
-  val nexus = "https://s01.oss.sonatype.org/"
-  if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-}
+publishTo := sonatypePublishToBundle.value
 
-sonatypeCredentialHost := "s01.oss.sonatype.org"
-publishMavenStyle      := true
+ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
+sonatypeCredentialHost             := "s01.oss.sonatype.org"
+ThisBuild / sonatypeRepository     := "https://s01.oss.sonatype.org/service/local"
+sonatypeRepository                 := "https://s01.oss.sonatype.org/service/local"
 
+publishMavenStyle := true
+
+ThisBuild / credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
 credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
 
 releaseProcess := Seq[ReleaseStep](

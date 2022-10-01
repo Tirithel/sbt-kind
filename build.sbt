@@ -4,8 +4,6 @@ import sbt.ScriptedPlugin.autoImport.scriptedLaunchOpts
 
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
-onLoadMessage := s"Welcome to sbt-ci-release ${version.value}"
-
 lazy val root = (project in file("."))
   .enablePlugins(SbtPlugin)
   .settings(
