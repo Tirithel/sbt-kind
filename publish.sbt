@@ -1,6 +1,8 @@
 import sbt._
 
+import sbtrelease._
 import xerial.sbt.Sonatype._
+import ReleaseStateTransformations._
 
 ThisBuild / organization := "org.cmoran"
 
@@ -28,3 +30,22 @@ ThisBuild / publishTo := {
 
 ThisBuild / sonatypeCredentialHost := "s01.oss.sonatype.org"
 ThisBuild / publishMavenStyle      := true
+
+ThisBuild / credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  inquireVersions,
+  runClean,
+  releaseStepTask(scalafmtCheckAll),
+  runTest,
+  releaseStepInputTask(scripted),
+  setReleaseVersion,
+  commitReleaseVersion,
+  tagRelease,
+  releaseStepCommand("publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
+  setNextVersion,
+  commitNextVersion,
+  pushChanges,
+)
