@@ -5,8 +5,8 @@ sbt-kind is a [sbt][sbt] plugin that loads built [Docker][docker] images for you
 Requirements
 ------------
 * sbt
-* Docker
 * kind
+* Docker _(soft dependency)_
 
 Setup
 -----
