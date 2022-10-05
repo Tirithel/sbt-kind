@@ -15,7 +15,7 @@ Setup
 Add sbt-kind as a dependency in `project/plugins.sbt`:
 
 ```scala
-addSbtPlugin("sbt-kind" % "sbt-kind" % "0.1.0")
+addSbtPlugin("org.cmoran" % "sbt-kind" % "0.1.0")
 ```
 
 Enable the plugin: 
